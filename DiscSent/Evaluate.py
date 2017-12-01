@@ -10,7 +10,7 @@ import numpy as np
 
 from Utils import *
 
-SENTEVAL_PATH = '/misc/vlgscratch4/BowmanGroup/haoyue/code/SentEval/'
+SENTEVAL_PATH = '/scratch/fc1315/nlp-project/SentEval/'
 # https://github.com/facebookresearch/SentEval
 assert SENTEVAL_PATH, 'Set SentEval Path'
 sys.path.insert(0, SENTEVAL_PATH)
