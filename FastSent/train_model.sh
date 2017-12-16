@@ -1,3 +1,19 @@
+#!/bin/bash
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=1
+#SBATCH --time=00:01:00
+#SBATCH --mem=2GB
+#SBATCH --job-name=myTest
+#SBATCH --mail-type=END
+#SBATCH --mail-user=fc1315@nyu.edu
+#SBATCH --output=slurm_%j.out
+
+module purge
+
+RUNDIR=$SCRATCH/fc1315/nlp-project/code
+module load python/intel/2.7.12 pytorch/0.2.0_1 protobuf/intel/3.1.0
+
 git clone https://github.com/piskvorky/gensim.git
 
 export PYTHONPATH="${PYTHONPATH}:$PWD/gensim"

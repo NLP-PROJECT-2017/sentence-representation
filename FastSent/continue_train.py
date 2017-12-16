@@ -20,10 +20,13 @@ sys.path = [x for x in sys.path if not 'gensim' in x]
 sys.path = pythonpath + sys.path
 libs = [os.path.basename(ppath) for ppath in pythonpath]
 PATH_TO_GENSIM = 'py2.7/lib/python2.7/site-packages'
+PATH_TO_FASTSENT = 'sentence-representation/Fastsent'
+PATH_TO_MODEL = 'out/FastSent_no_autoencoding_512_5_0'
 # import skipthought and Senteval
 sys.path.insert(0, PATH_TO_GENSIM)
-
+sys.path.insert(0, PATH_TO_FASTSENT)
 import gensim
+import fastsent
 if 'gensim' in libs:
     print 'using sentrep model not cbow'
     rep = 'sentrep'
@@ -49,10 +52,9 @@ sentfile = args.corpus
 
 if 'gensim' in libs:
     sentences = MySentences(sentfile)
-    model = FastSent(workers=1, fastsent_mean=0, min_count=args.min_count, size=args.dim, autoencode=autoencode_flag, sample=args.sample, iter=args.epoch)
-
+    model = fastsent.FastSent.load(PATH_TO_MODEL)
 
 model.build_vocab(sentences)
-model.train(sentences, chunksize=1000)
+model.train(sentences, chunksize=10000)
 model.save(args.savedir+'FastSent_%s_%s_%s_%s' % (auto_label, args.dim, args.min_count, args.sample))
 
