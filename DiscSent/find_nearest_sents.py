@@ -29,6 +29,14 @@ import numpy
 import pickle
 from Utils import *
 import operator
+from datetime import datetime
+def get_time_str():
+	time_str = str(datetime.now())
+	time_str = '_'.join(time_str.split())
+	time_str = '_'.join(time_str.split('.'))
+	time_str = ''.join(time_str.split(':'))
+	return time_str
+
 def get_embed(model, sent):
 	ss = ''
 	for s in sent:
@@ -60,7 +68,7 @@ parser.add_argument("-o", "--output_folder", default='',
 parser.add_argument("-nc", "--nocuda", action='store_false', dest='cuda', help="not to use CUDA")
 
 options = parser.parse_args()
-log_file = pjoin(options.output_folder, 'find_nearest_sents_' + options.model + '.log')
+log_file = pjoin(options.output_folder, 'find_nearest_sents_' + options.model + '_' + get_time_str() + '.log')
 logging.basicConfig(format='%(asctime)s : %(message)s', level=logging.DEBUG, filename=log_file)
 
 f = open(options.sample)
