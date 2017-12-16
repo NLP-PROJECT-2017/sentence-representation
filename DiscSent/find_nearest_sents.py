@@ -8,7 +8,7 @@ from os.path import join as pjoin
 import numpy
 import pickle
 from Utils import *
-
+import operator
 def get_embed(model, sent):
 	ss = ''
 	for s in sent:
@@ -21,6 +21,7 @@ def get_embed(model, sent):
 def get_embeds(batched_data, encoder, batch):
 	sents = map(lambda sen: ['<S>'] + [word.lower() for word in sen], batch)
 	sents, lengths = batched_data.batch_to_vars(sents)
+	logging.info('sents %d',len(sents))
 	embedding, h_for, h_back = encoder.forward(sents, lengths=lengths)
 	model_embedding = embedding.data.cpu().numpy()
 	return model_embedding
@@ -36,9 +37,11 @@ parser.add_argument("-data", "--data_folder", default='',
                       help="location of the data")
 parser.add_argument("-o", "--output_folder", default='',
                       help="location of the model")
+parser.add_argument("-nc", "--nocuda", action='store_false', dest='cuda', help="not to use CUDA")
 
 options = parser.parse_args()
-log_file = pjoin('find_nearest_sents_' + options.model + '.log')
+log_file = pjoin(options.output_folder, 'find_nearest_sents_' + options.model + '.log')
+logging.basicConfig(format='%(asctime)s : %(message)s', level=logging.DEBUG, filename=log_file)
 
 f = open(options.sample)
 batch = [s.strip() for s in f.readlines()]
@@ -53,8 +56,8 @@ logging.info("%d queries loaded.\n", len(queries))
 q_embed = []
 sents_embed = []
 
-if model == 'discsent':
-	args_path = pjoin(args.output_folder, args.model_args)
+if options.model == 'discsent':
+	args_path = pjoin(options.output_folder, options.model_args)
 	args = pickle.load(open(args_path))
 	args.data_folder = options.data_folder
 	# args.max_length = options.max_length
@@ -62,20 +65,30 @@ if model == 'discsent':
 	encoder = Encoder(args)
 	model_file = pjoin(options.output_folder, options.model_pt)
 	encoder.load_state_dict(torch.load(model_file))
-	batched_data  = BatchedData(args)
+	if options.cuda:
+		encoder = encoder.cuda()
 	
-	sents_embed = get_embeds(batched_data,encoder,batch)
+	batched_data  = BatchedData(args)
+	chunksize = 100
+	for i in range(len(batch)//chunksize):
+		logging.info("%d", i)
+		embeds = get_embeds(batched_data,encoder,batch[i*chunksize:(i+1)*chunksize])
+		if sents_embed == []:
+			sents_embed = embeds
+		else:
+			sents_embed = numpy.vstack((sents_embed, embeds))
+		
 	q_embed = get_embeds(batched_data,encoder,queries)
 
-if model == 'fastsent':
-	fastsent_model = fastsent.FastSent.load(args.model_pt)
+if options.model == 'fastsent':
+	fastsent_model = fastsent.FastSent.load(options.model_pt)
 	for q in queries:
 		sents_embed.append(get_embed(fastsent_model, q))
 
 for i, q in enumerate(q_embed):
 	logging.info("Query: %s top %d nearest:", queries[i], options.topk)
 	dis = [(j, numpy.linalg.norm(sent-q)) for j, sent in enumerate(sents_embed)]
-	sorted_dis = sorted(dis, key=itemgetter(1))
+	sorted_dis = sorted(dis, key=operator.itemgetter(1))
 	for k, _ in sorted_dis[:options.topk]:
 		logging.info("%s", batch[k])
 
