@@ -1,6 +1,26 @@
 '''
 Find nearest neighbor of sentences
 '''
+import sys
+reload(sys)
+sys.setdefaultencoding('utf8')
+
+
+# Set PATHs
+PATH_PRE = '/scratch/fc1315-share/nlp-project/'
+PATH_TO_SENTEVAL = PATH_PRE+'SentEval/'
+PATH_TO_DATA = PATH_PRE+'SentEval/data/senteval_data/'
+PATH_TO_FASTSENT = PATH_PRE+'sentence-representation/FastSent'
+#assert PATH_TO_SKIPTHOUGHT != '', 'Download skipthought and set correct PATH'
+PATH_TO_GENSIM = PATH_PRE+'py2.7/lib/python2.7/site-packages'
+PATH_TO_MODEL = PATH_PRE+'out/FastSent_no_autoencoding_512_5_0'
+# import skipthought and Senteval
+sys.path.insert(0, PATH_TO_FASTSENT)
+sys.path.insert(0, PATH_TO_SENTEVAL)
+sys.path.insert(0, PATH_TO_GENSIM)
+import fastsent
+import senteval
+#model = fastsent.FastSent.load(PATH_TO_MODEL)
 
 import argparse
 import logging
@@ -83,7 +103,9 @@ if options.model == 'discsent':
 if options.model == 'fastsent':
 	fastsent_model = fastsent.FastSent.load(options.model_pt)
 	for q in queries:
-		sents_embed.append(get_embed(fastsent_model, q))
+		q_embed.append(get_embed(fastsent_model, q))
+	for sent in batch:
+		sents_embed.append(get_embed(fastsent_model, sent))	
 
 for i, q in enumerate(q_embed):
 	logging.info("Query: %s top %d nearest:", queries[i], options.topk)
