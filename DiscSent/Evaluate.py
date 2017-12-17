@@ -10,7 +10,7 @@ import numpy as np
 
 from Utils import *
 
-SENTEVAL_PATH = '/scratch/fc1315/nlp-project/SentEval/'
+SENTEVAL_PATH = '/scratch/fc1315-share/nlp-project/SentEval/'
 # https://github.com/facebookresearch/SentEval
 assert SENTEVAL_PATH, 'Set SentEval Path'
 sys.path.insert(0, SENTEVAL_PATH)
@@ -159,7 +159,7 @@ if __name__ == "__main__":
     logging.info("Argument %s: %r", arg, value)
   logging.info(">>>>>ARGUMENTS")
   # config for transfer tasks
-  transfer_tasks = ['MR', 'CR', 'SUBJ', 'MPQA', 'SST', 'TREC', 'SICKRelatedness', 'SICKEntailment', 'MRPC', 'STS14']
+  transfer_tasks = ['CR', 'MR', 'MPQA', 'SUBJ', 'SST', 'TREC', 'MRPC', 'SNLI', 'SICKEntailment', 'SICKRelatedness', 'STSBenchmark', 'STS12', 'STS13', 'STS14', 'STS15', 'STS16']
   if options.random:
     params_senteval = DotDict({'usepytorch': True,
                                'task_path': pjoin(SENTEVAL_PATH, 'data/senteval_data')

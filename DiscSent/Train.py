@@ -580,7 +580,7 @@ if __name__ == "__main__":
       compare_file  = log_file[:-4] + '_comp_' + str(e) + '.pt'
       torch.save(modules["all_compare"].state_dict(), compare_file)
       optim_file  = log_file[:-4] + '_optim_' + str(e) + '.pt'
-      torch.save(modules["optim"].state_dict(), compare_file)
+      torch.save(modules["optim"].state_dict(), optim_file)
 
 # model_onc_joint_2017-09-28_115204_063300_10.pt
 # model_a_joint_2017-09-28_115205_220045_7.pt
