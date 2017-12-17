@@ -55,6 +55,6 @@ if 'gensim' in libs:
     model = fastsent.FastSent.load(PATH_TO_MODEL)
 
 model.build_vocab(sentences)
-model.train(sentences, chunksize=10000)
-model.save(args.savedir+'FastSent_%s_%s_%s_%s' % (auto_label, args.dim, args.min_count, args.sample))
+model.train(sentences, chunksize=1000)
+model.save(args.savedir+'continue_FastSent_%s_%s_%s_%s' % (auto_label, args.dim, args.min_count, args.sample))
 
