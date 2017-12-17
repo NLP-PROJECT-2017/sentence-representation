@@ -144,8 +144,7 @@ while True:
 		order_ += o
 		next_ += n
 		conj_ += c
-		n_sentence += sentence_no
-		logging.info("%s \t  %d %d %d %d", get_time_str(), n_sentence, len(order_), len(next_), len(conj_))
+		logging.info("%s \t  %d %d %d %d", get_time_str(), sentence_no*chunksize, len(order_), len(next_), len(conj_))
 	except StopIteration:
 		break
 
