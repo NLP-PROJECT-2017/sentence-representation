@@ -53,6 +53,6 @@ if 'gensim' in libs:
 
 
 model.build_vocab(sentences)
-model.train(sentences, chunksize=1000)
+model.train(sentences, chunksize=10000)
 model.save(args.savedir+'FastSent_%s_%s_%s_%s' % (auto_label, args.dim, args.min_count, args.sample))
 
